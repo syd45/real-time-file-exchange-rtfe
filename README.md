@@ -164,7 +164,7 @@ python test.py
   }
   ```
 ## 项目测试
-本项目提供了一个简单的测试脚本,详见(https://github.com/syd45/real-time-file-exchange-rtfe/tree/main/test)[https://github.com/syd45/real-time-file-exchange-rtfe/tree/main/test]
+本项目提供了一个简单的测试脚本,详见(https://github.com/syd45/real-time-file-exchange-rtfe/tree/main/test)
 
 ## 安全措施
 
