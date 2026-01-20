@@ -1,5 +1,5 @@
 README.md
-# SDAV - 用WebSocket增强的WebDAV文件同步神器
+# RTFE(项目开发时名称为SDAV) - 用WebSocket增强的WebDAV文件同步神器
 
 这个项目把WebDAV协议和WebSocket技术结合在一起，让你能在多台设备之间实时同步文件，再也不用担心文件不同步的问题啦！
 
