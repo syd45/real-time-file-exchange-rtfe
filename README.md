@@ -1,109 +1,109 @@
-# SDAV - WebDAV with WebSocket Real-time Notifications
+README.md
+# SDAV - 用WebSocket增强的WebDAV文件同步神器
 
-This project combines WebDAV protocol with WebSocket technology to provide real-time file synchronization notifications across multiple devices.
+这个项目把WebDAV协议和WebSocket技术结合在一起，让你能在多台设备之间实时同步文件，再也不用担心文件不同步的问题啦！
 
-## 功能特性
+## 这个项目能干啥？
 
-- 完整的WebDAV协议支持
-- 通过WebSocket实现实时文件变更通知
-- 可自定义的文件/文件夹变更订阅
-- WebSocket心跳机制，自动检测和清理断开的连接
-- 跨平台文件同步
-- 安全的身份验证和授权
-- HTTPS加密支持
-- Docker部署
+- ✅ 完整支持WebDAV协议（就是标准的文件操作）
+- ✅ 用WebSocket实时告诉你文件有啥变化
+- ✅ 可以选择关注哪些文件/文件夹的变化
+- ✅ 有心跳机制，自动清理掉线的连接
+- ✅ 跨平台同步（Windows、Mac、Linux都能用）
+- ✅ 安全认证，保护你的文件安全
+- ✅ Docker一键部署，简单方便
 
-## 快速开始
+## 怎么快速开始？
 
-### 使用Docker（推荐）
+### 推荐方式：用Docker（最简单）
 
-1. 克隆或下载此项目
-2. 进入项目目录
-3. 运行启动脚本来构建并启动服务：
+1. 克隆或下载这个项目
+2. 打开终端进入项目目录
+3. 运行启动脚本：
 
 ```bash
 chmod +x start.sh
 ./start.sh
 ```
 
-或者手动执行：
+如果你喜欢手动操作：
 
 ```bash
-# 停止现有容器
+# 先停掉旧的容器
 docker compose down
 
-# 清理构建缓存
+# 清理一下构建缓存
 docker builder prune -f
 
-# 构建并启动服务
+# 重新构建并启动服务
 docker compose up --build -d
 ```
 
-服务将在 `http://localhost:3000` 上可用
+服务会在 `http://localhost:3000` 上跑起来
 
-### 手动安装
+### 手动安装（适合折腾党）
 
-1. 安装Node.js和npm
-2. 克隆或下载此项目
-3. 进入项目目录并运行 `npm install`
-4. 在 `.env` 文件中配置环境变量
-5. 运行 `npm start` 来启动服务器
-6. 通过浏览器或WebDAV客户端访问服务器
+1. 先安装Node.js和npm
+2. 克隆或下载项目
+3. 进入项目目录，运行 `npm install` 安装依赖
+4. 在 `.env` 文件里配置环境变量
+5. 运行 `npm start` 启动服务器
+6. 用浏览器或WebDAV客户端访问服务器
 
-## 配置
+## 配置说明
 
-可以在 `docker-compose.yml` 文件中使用环境变量配置服务：
+在 `docker-compose.yml` 文件里可以配置各种环境变量：
 
-- `USERNAME`: WebDAV用户名（默认：admin）
-- `PASSWORD`: WebDAV密码（默认：password）
-- `NODE_ENV`: 环境（默认：production）
+- `USERNAME`: WebDAV用户名（默认是admin）
+- `PASSWORD`: WebDAV密码（默认是password）
+- `NODE_ENV`: 环境（默认是production）
 
-## 测试
+## 测试功能
 
-提供了测试脚本来验证WebDAV和WebSocket功能：
+我们提供了测试脚本帮你验证WebDAV和WebSocket功能：
 
 ```bash
-# 安装依赖
+# 先安装依赖
 pip install requests websocket-client
 
-# 运行测试
+# 然后运行测试
 python test.py
 ```
 
-## 架构
+## 技术架构
 
-- **WebDAV层**: 实现标准WebDAV协议用于文件操作
-- **WebSocket层**: 提供文件变更的实时通知
-- **订阅管理器**: 允许客户端订阅特定文件/文件夹的变更
-- **文件系统**: 使用本地文件系统进行直接文件存储（无数据库）
-- **认证**: 基础认证确保安全访问
+- **WebDAV层**: 实现标准WebDAV协议，用来操作文件
+- **WebSocket层**: 实时告诉你文件变了啥
+- **订阅管理器**: 让你能选择关注哪些文件/文件夹
+- **文件系统**: 用本地文件系统存储（不需要数据库）
+- **认证**: 基础认证保护你的访问安全
 
-## 订阅功能
+## 订阅功能（重点来了！）
 
-订阅功能允许客户端监听特定文件或文件夹的变化。客户端可以动态订阅感兴趣的路径，并且只会收到这些路径变化的通知。
+订阅功能让你可以选择监听特定文件或文件夹的变化。你可以订阅感兴趣的地方，只接收这些地方的变化通知。
 
 ### 客户端WebSocket命令
 
-客户端可以通过以下WebSocket命令与订阅系统交互：
+你可以用这些WebSocket命令和订阅系统互动：
 
 1. **订阅路径**:
    ```json
    {
      "type": "subscribe",
-     "path": "/要监听的路径"
+     "path": "/你想监听的路径"
    }
    ```
 
    路径模式:
-   - `/folder/**` - 递归监听所有文件和子文件夹
-   - `/folder/*` - 只监听文件夹的直接子项
+   - `/folder/**` - 监听所有文件和子文件夹（包括嵌套的）
+   - `/folder/*` - 只监听当前文件夹的直接子项
    - `/file.txt` - 监听特定文件
 
 2. **取消订阅路径**:
    ```json
    {
      "type": "unsubscribe",
-     "path": "/要取消监听的路径"
+     "path": "/你想取消监听的路径"
    }
    ```
 
@@ -116,15 +116,15 @@ python test.py
 
 ### 服务器WebSocket事件
 
-服务器向已订阅的客户端发送以下事件:
+服务器会给订阅了的客户端发这些事件:
 
-- `fileChange`: 当文件或文件夹发生变化时发送
+- `fileChange`: 文件或文件夹有变化时发送
   ```json
   {
     "type": "fileChange",
     "eventType": "created|updated|deleted|directoryCreated|directoryDeleted",
-    "path": "/发生变化项目的相对路径",
-    "timestamp": "ISO8601时间戳"
+    "path": "/发生变化的文件路径",
+    "timestamp": "时间戳"
   }
   ```
 
@@ -132,8 +132,8 @@ python test.py
   ```json
   {
     "type": "subscriptionConfirmed",
-    "path": "/订阅的路径",
-    "message": "成功消息"
+    "path": "/你订阅的路径",
+    "message": "订阅成功啦！"
   }
   ```
 
@@ -141,100 +141,68 @@ python test.py
   ```json
   {
     "type": "unsubscriptionConfirmed",
-    "path": "/取消订阅的路径",
-    "message": "成功消息"
+    "path": "/你取消订阅的路径",
+    "message": "取消订阅成功！"
   }
   ```
 
-## 安全性
+## 安全措施
 
-- 所有操作都需要基本身份验证
-- 凭据通过环境变量配置
-- 为Web客户端启用CORS
-- 使用Helmet确保HTTP头安全
+- 所有操作都要身份验证（不用担心陌生人乱动你的文件）
+- 密码通过环境变量配置（更安全）
+- 支持CORS（浏览器友好）
+- 用Helmet加强HTTP头安全
 
-## 修复内容 (0.1.13版本)
 
-此版本修复了rclone客户端的以下错误：
+## 常见问题解决
 
-1. **"unexpected EOF" 错误** - 通过优化文件传输缓冲区大小和超时设置解决
-2. **"404 Not Found" 错误** - 通过改进文件系统操作和事件处理解决
+如果遇到问题，按下面步骤排查：
 
-### 主要变更
+1. 确认服务器是不是在运行，能不能访问
+2. 检查用户名密码是不是对的
+3. 确认文件权限够不够
+4. 看看服务器日志有没有报错
 
-- 增加了文件传输的缓冲区大小（16MB-64MB动态调整）
-- 延长了请求超时时间至10分钟
-- 优化了流处理逻辑，增加了更好的错误处理
-- 提高了文件句柄限制至131072
-- 为rclone优化了上传和下载的highWaterMark设置
-- 添加了额外的延迟以确保文件系统完全写入
-
-### 系统优化
-
-某些系统级优化需要在宿主机上设置，详情请参见 `SYSTEM_OPTIMIZATION.md` 文档。
-
-### rclone配置
-
-使用提供的 `rclone_test_config.conf` 文件来优化rclone性能。
-
-对于特别大的文件或不稳定的网络连接，可以使用以下高级配置：
-
-```bash
-# 针对大文件传输的rclone命令
-rclone copy bigfile.zip remote:path/ --config=rclone_test_config.conf --transfers 1 --checkers 1 --low-level-retries 10 --retries 5 --timeout 10m --contimeout 2m
-
-# 或者在rclone.conf中添加以下参数
-[advanced_remote]
-type = webdav
-url = http://localhost:1622
-vendor = other
-user = YOUR_USERNAME
-pass = YOUR_PASSWORD
-retries = 10
-retries-sleep = 1s
-low-level-retries = 10
-max-backlog = 1
-checkers = 1
-transfers = 1
-timeout = 10m
-contimeout = 2m
-expectContinue = true
-```
-
-### 针对大文件下载的优化
-
-对于大文件下载，特别是遇到EOF错误时，建议使用以下参数：
-
-```bash
-# 针对大文件下载的优化命令
-rclone copy remote:path/bigfile.zip ./ --config=rclone_test_config.conf \
-  --transfers 1 \
-  --checkers 1 \
-  --low-level-retries 15 \
-  --retries 15 \
-  --timeout 20m \
-  --contimeout 5m \
-  --buffer-size 32M \
-  --max-backlog 1 \
-  --vfs-cache-mode writes \
-  --vfs-cache-max-size 1G \
-  --vfs-cache-max-age 1m
-```
-
-## 故障排除
-
-如果遇到问题：
-
-1. 检查服务器是否正在运行且可访问
-2. 验证凭据是否正确
-3. 确保适当的文件权限
-4. 检查服务器日志中的错误
-
-对于Docker问题：
+如果是Docker问题：
 ```bash
 # 查看容器日志
 docker compose logs
 
 # 重启服务
 ./start.sh
+```
 
+## 未来计划
+
+- 采用私有化的文件协议，支持断点续传、压缩传输等等
+
+## 来点想法!
+
+根据Linux哲学，万物皆文件，所有API也可以是文件，即文件驱动API（File‑Driven API，FDA）
+所以借助本项目可以轻松实现一个轻量化的API方式
+
+### 具体实现
+
+1. 客户端连接本项目并创建一个JSON文件（当然，YAML等等也都可以，JSON不是必须的）
+2. 客户端订阅项目，如果文件有改动客户端可以及时收到通知而不需要轮询
+
+这个思路的优点:
+- 不需要复杂的API，前端开发人员也可以轻松完成全栈开发
+- 对比真正的API，延迟方面丝毫不逊色
+- 可以多个程序共用这一个后端API
+缺点:
+- 无法满足复杂的鉴权要求
+- 无法满足大型API复杂的并发需求
+
+ps:如果需要后端处理，则可以单独部署一个脚本在后端负责处理文件而不必写复杂的API
+
+## 开源协议
+
+本项目使用MIT许可证，你可以自由使用、修改和分发。
+
+## 遇到问题了？
+
+有问题随时提issue，我们会尽快回复你！也可以看看我们的文档，也许能找到解决方案。
+
+## ps:
+因为6月份要高考的原因,预计下一次要6月末才能更新
