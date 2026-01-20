@@ -5,7 +5,7 @@
 WebSocket认证与通知功能测试脚本
 用于验证sdav项目的WebSocket认证、WebDAV和文件变更通知功能
 支持通过环境变量自定义配置
-请参见 test.md 文件获取环境变量详细说明
+请参见 https://github.com/syd45/real-time-file-exchange-rtfe/tree/main/test 获取环境变量详细说明
 """
 
 import json
