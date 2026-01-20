@@ -1,0 +1,69 @@
+services:
+  sdav:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app/uploads:/app/uploads
+      - ./ssl:/app/ssl
+    environment:
+      - NODE_ENV=production
+      - USERNAME=YOUR_USERNAME
+      - PASSWORD=YOUR_PASSWORD
+      # 添加要监听的特定路径，多个路径用逗号分隔
+      - WATCH_PATHS=/app/uploads/scal,/app/uploads/rime
+      # 设置工作进程数
+      - WORKER_COUNT=1  # 单个工作进程以避免资源竞争
+      # 增加超时设置以处理大文件传输
+      - TIMEOUT=3600000  # 60分钟超时
+      - KEEP_ALIVE_TIMEOUT=300  # 5分钟保持连接时间
+      # 添加缓冲区大小设置以改善大文件处理
+      - BODY_SIZE_LIMIT=5000mb  # 增加请求体大小限制
+      - RESPONSE_BUFFER_SIZE=256kb  # 增加响应缓冲区大小
+      # WebDAV特定配置
+      - WEBDAV_READ_BUFFER_SIZE=512kb  # 增加读取缓冲区大小
+      - WEBDAV_STREAM_CHUNK_SIZE=1mb  # 增加流式传输块大小
+      - WEBDAV_MAX_CONCURRENT_READS=2  # 限制并发读取数
+      # 连接复用和错误处理配置
+      - ENABLE_HTTP_PIPELINING=true  # 启用HTTP流水线
+      - TCP_KEEPALIVE_INTERVAL=60  # TCP Keep-alive间隔
+      - MAX_CONNECTIONS_PER_IP=5  # 限制每个IP的最大连接数
+      # rclone优化配置
+      - RCLONE_BUFFER_SIZE=128M  # 增加rclone缓冲区大小
+      - RCLONE_UPLOAD_CUTOFF=128M  # 设置rclone分段上传阈值
+      - RCLONE_CHUNK_SIZE=32M  # 设置rclone块大小
+      - RCLONE_TRANSFERS=2  # 限制同时传输数
+      - RCLONE_CHECKERS=4  # 限制检查器数量
+      - RCLONE_DISABLE_HTTP_KEEPALIVES=false  # 启用HTTP Keep-alive
+      - RCLONE_NO_MODTIME=true  # 禁用修改时间检查
+      - FILE_CACHE_EXPIRY=300  # 文件缓存过期时间(秒)
+      - CHUNKED_UPLOAD_ENABLE=true  # 启用分块上传
+      - RETRY_ATTEMPTS=3  # 设置重试次数
+      - RETRY_DELAY_MS=5000  # 设置重试延迟(毫秒)
+      # HTTP连接优化
+      - HTTP_MAX_RETRIES=5  # HTTP最大重试次数
+      - HTTP_RETRY_DELAY_MS=2000  # HTTP重试延迟
+      - HTTP_IDLE_CONN_TIMEOUT=120  # 空闲连接超时
+      - HTTP_MAX_IDLE_CONNS=100  # 最大空闲连接数
+      - HTTP_MAX_IDLE_CONNS_PER_HOST=10  # 每个主机的最大空闲连接数
+      # 文件系统优化
+      - FS_SYNC_ON_CLOSE=true  # 关闭时同步文件
+      - FS_READ_AHEAD=128M  # 设置读取预加载
+      - FS_BUFFER_MULTIPLE=4  # 缓冲区倍数
+      # 内存优化
+      - NODE_OPTIONS=--max-old-space-size=4096  # 增加内存限制
+    restart: unless-stopped
+    # 优化容器配置
+    ulimits:
+      nofile:
+        soft: 524288  # 增加文件句柄限制
+        hard: 524288
+      memlock:
+        soft: -1
+        hard: -1
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
